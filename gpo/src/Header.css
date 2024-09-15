@@ -1,0 +1,37 @@
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: #333;
+    color: white;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.site-name {
+    font-size: 25px;
+    font-weight: bold;
+}
+
+.navbar-buttons {
+    display: flex;
+}
+
+.nav-button {
+    background-color: transparent;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    margin-left: 10px;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.nav-button:hover {
+    background-color: #555;
+    border-radius: 5px;
+}
