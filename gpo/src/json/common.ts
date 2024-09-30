@@ -22,7 +22,7 @@ import { RequiredError } from "./base";
  *
  * @export
  */
-export const DUMMY_BASE_URL = 'http://localhost:44387'
+export const DUMMY_BASE_URL = 'https://localhost:44387'
 
 /**
  *
