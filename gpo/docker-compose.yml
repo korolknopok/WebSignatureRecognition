@@ -1,0 +1,13 @@
+services:
+  frontend:
+    build:
+      context: . # Указывает на текущую директорию gpo
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000" # Пробрасываем порт 3000
+    environment:
+      - NODE_ENV=development
+    volumes:
+      - .:/app # Монтируем текущую директорию в контейнер
+    stdin_open: true
+    tty: true
