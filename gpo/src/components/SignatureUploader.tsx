@@ -2,7 +2,6 @@ import React, { useState, useRef, useEffect, useMemo } from "react";
 import '../App.css';
 import { GetSignaturesInfoResponse, SignaturesApiFactory } from "../json";
 
-// Описываем интерфейс для подписи
 interface Signature {
     id: number;
     name: string;

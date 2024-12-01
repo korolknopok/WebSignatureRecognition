@@ -1,20 +1,49 @@
-import React from "react";
-import SignatureUploader from "./components/SignatureUploader";
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Header from './Header';
+import AdminPanel from './Authorization/AdminPanel';
+import UserPanel from './Authorization/UserPanel';
+import SignatureUploader from './components/SignatureUploader';
 import './App.css';
-import Header from "./Header";
-const App: React.FC = () => {
-  // Функция для обработки загруженного файла (например, отправка на сервер)
-  const handleFileUpload = (file: File) => {
-    console.log("Uploaded file:", file);
-    // Здесь можно добавить логику отправки файла на бэкенд
-  };
+import {Button} from "@mui/material";
+import AuthPage from "./Authorization/AuthPage";
+import PrivateRoute from "./Authorization/PrivateRoute";
 
-  return (
-      <div className="App">
-        <Header/>
-        <SignatureUploader/>
-      </div>
-  );
+const App: React.FC = () => {
+    const [userRole, setUserRole] = useState<'admin' | 'user' | null>(null);
+
+    const handleLogout = () => {
+        localStorage.removeItem('token');
+        setUserRole(null);
+    };
+
+    return (
+        <Router>
+            <div className="App">
+                <Header />
+                <Routes>
+                    <Route path="/auth" element={<AuthPage />} />
+                    <Route
+                        path="/"
+                        element={
+                            <PrivateRoute>
+                                <div>
+                                    {userRole === 'admin' && <AdminPanel />}
+                                    {userRole === 'user' && <UserPanel />}
+                                    {userRole && (
+                                        <Button variant="contained" onClick={handleLogout}>
+                                            Выйти
+                                        </Button>
+                                    )}
+                                    <SignatureUploader />
+                                </div>
+                            </PrivateRoute>
+                        }
+                    />
+                </Routes>
+            </div>
+        </Router>
+    );
 };
 
 export default App;
