@@ -1,11 +1,16 @@
-import React, { useState, useRef, useEffect, useMemo } from "react";
-import '../App.css';
-import { GetSignaturesInfoResponse, SignaturesApiFactory } from "../json";
+import React, { useState, useRef, useEffect } from "react";
+import "../App.css";
+import axios from "axios";
 
 interface Signature {
     id: number;
     name: string;
     url: string;
+}
+
+interface GetSignaturesInfoResponse {
+    id: number;
+    name: string;
 }
 
 const SignatureUploader: React.FC = () => {
@@ -24,43 +29,87 @@ const SignatureUploader: React.FC = () => {
         test: null,
     });
 
-    const [loading, setLoading] = useState<boolean>(false); // состояние загрузки подписей
-    const [error, setError] = useState<string | null>(null); // состояние ошибки
+    const [loading, setLoading] = useState<boolean>(false);
+    const [error, setError] = useState<string | null>(null);
 
     const originalInputRef = useRef<HTMLInputElement | null>(null);
     const testInputRef = useRef<HTMLInputElement | null>(null);
 
-    const signaturesApi = useMemo(() => SignaturesApiFactory(), []);
+    const getToken = (): string | null => {
+        const token = localStorage.getItem("token");
+        if (!token) {
+            setError("Токен отсутствует. Авторизуйтесь снова.");
+            return null;
+        }
 
-    // Загрузка оригинальных подписей
-    useEffect(() => {
-        const fetchOriginalSignatures = async () => {
-            setLoading(true);
-            setError(null);
-            try {
-                const response = await signaturesApi.apiSignaturesInformationGetGet(1);
+        const payload = JSON.parse(atob(token.split('.')[1]));
+        const now = Math.floor(Date.now() / 1000);
+        if (payload.exp < now) {
+            setError("Токен истёк. Авторизуйтесь снова.");
+            return null;
+        }
+        return token;
+    };
 
+    const fetchSignatures = async () => {
+        setLoading(true);
+        setError(null);
+
+        const token = getToken();
+        if (!token) return;
+
+        console.log("Используем токен:", token);
+
+        const headers = {
+            Authorization: `Bearer ${token}`,
+            Accept: 'application/json',
+        };
+
+        console.log("Заголовки запроса:", headers);
+
+        try {
+            const response = await axios.get("http://localhost:5098/api/Signatures/Information/Get", {
+                headers,
+            });
+
+            console.log("Ответ от сервера:", response);
+
+            if (response.status === 200) {
                 const fetchedSignatures: Signature[] = response.data.map((sig: GetSignaturesInfoResponse) => ({
-                    id: sig.id ?? 0,
-                    name: sig.name || "Unknown",
-                    url: `https://localhost:44387/SignaturesImage/1/${sig.name || 'unknown'}`,
+                    id: sig.id,
+                    name: sig.name,
+                    url: `http://localhost:5098/api/Signatures/GetSignature?fileId=${sig.id}`,
                 }));
 
-                setSignatures(prev => ({ ...prev, original: fetchedSignatures }));
-            } catch (error) {
-                setError("Ошибка при загрузке оригинальных подписей");
-                console.error("Ошибка при загрузке оригинальных подписей", error);
-            } finally {
-                setLoading(false);
+                setSignatures((prev) => ({
+                    ...prev,
+                    original: fetchedSignatures,
+                }));
+            } else {
+                setError("Ошибка при загрузке подписей.");
             }
-        };
-        fetchOriginalSignatures();
-    }, [signaturesApi]);
+        } catch (error: unknown) {
+            if (axios.isAxiosError(error) && error.response) {
+                if (error.response.status === 401) {
+                    setError("Токен истек или недействителен. Пожалуйста, авторизуйтесь снова.");
+                } else {
+                    setError("Не удалось загрузить подписи.");
+                }
+            } else {
+                setError("Произошла неизвестная ошибка.");
+            }
+        } finally {
+            setLoading(false);
+        }
+    };
 
-    // Обработка изменения файла (загрузка подписей)
+    useEffect(() => {
+        fetchSignatures();
+    }, []);
+
     const handleFileChange = async (
         event: React.ChangeEvent<HTMLInputElement>,
-        type: 'original' | 'test'
+        type: "original" | "test"
     ) => {
         const files = event.target.files;
         if (files) {
@@ -70,40 +119,65 @@ const SignatureUploader: React.FC = () => {
                 url: URL.createObjectURL(file),
             }));
 
-            if (type === 'original') {
+            if (type === "original") {
+                const token = getToken();
+                if (!token) return;
+
                 try {
-                    await signaturesApi.apiSignaturesAddPost(1, Array.from(files));
+                    const formData = new FormData();
+                    Array.from(files).forEach((file) => formData.append("file", file));
+
+                    await axios.post("http://localhost:5098/api/Signatures/AddSignature", formData, {
+                        headers: {
+                            "Content-Type": "multipart/form-data",
+                            Authorization: `Bearer ${token}`,
+                        },
+                    });
+
+                    fetchSignatures();
                 } catch (error) {
                     console.error("Ошибка при загрузке подписей", error);
-                    alert("Не удалось загрузить подписи");
-                    return;
+                    setError("Не удалось загрузить подписи.");
                 }
+            } else {
+                setSignatures((prev) => ({
+                    ...prev,
+                    [type]: [...prev[type], ...newSignatures],
+                }));
             }
-
-            setSignatures(prev => ({
-                ...prev,
-                [type]: [...prev[type], ...newSignatures],
-            }));
         }
     };
 
-    // Удаление подписи
-    const handleDeleteSignature = async (signatureId: number) => {
+    const handleDeleteSignature = async (fileId: number) => {
         try {
-            await signaturesApi.apiSignaturesDeleteSignatureDelete(signatureId);
-            setSignatures(prev => ({
+            const token = getToken();
+            if (!token) {
+                throw new Error("Токена нет");
+            }
+
+            await axios.delete(`http://localhost:5098/api/Signatures/DeleteSignature`, {
+                headers: {
+                    Authorization: `Bearer ${token}`,
+                    Accept: '*/*',
+                },
+                params: { fileId },
+            });
+
+            console.log(`Файл с ID ${fileId} успешно удален.`);
+
+            setSignatures((prev) => ({
                 ...prev,
-                original: prev.original.filter(signature => signature.id !== signatureId),
+                original: prev.original.filter((signature) => signature.id !== fileId),
             }));
         } catch (error) {
             console.error("Ошибка при удалении подписи", error);
-            alert("Не удалось удалить подпись");
+            setError("Не удалось удалить подпись.");
         }
     };
 
-    const handleSelectSignature = (type: 'original' | 'test', url: string) => {
-        setSelectedSignatures(prev => ({ ...prev, [type]: url }));
-        setPreviews(prev => ({ ...prev, [type]: url }));
+    const handleSelectSignature = (type: "original" | "test", url: string) => {
+        setSelectedSignatures((prev) => ({ ...prev, [type]: url }));
+        setPreviews((prev) => ({ ...prev, [type]: url }));
     };
 
     const handleVerifySignatures = () => {
@@ -114,23 +188,28 @@ const SignatureUploader: React.FC = () => {
         }
     };
 
-    const renderSignatureOptions = (type: 'original' | 'test') => (
+    const renderSignatureOptions = (type: "original" | "test") => (
         <select onChange={(e) => handleSelectSignature(type, e.target.value)}>
             <option value="">-- Выберите подпись --</option>
-            {signatures[type].map(signature => (
-                <option key={signature.id} value={signature.url}>{signature.name}</option>
+            {signatures[type].map((signature) => (
+                <option key={signature.id} value={signature.url}>
+                    {signature.name}
+                </option>
             ))}
         </select>
     );
 
-    const renderPreview = (type: 'original' | 'test') => (
+    const renderPreview = (type: "original" | "test") =>
         previews[type] && (
             <div className="preview-container">
-                <h4>{type === 'original' ? 'Оригинальная подпись:' : 'Проверяемая подпись:'}</h4>
-                <img src={previews[type]!} alt={`${type} Signature`} className="image-preview large-preview" />
+                <h4>{type === "original" ? "Оригинальная подпись:" : "Проверяемая подпись:"}</h4>
+                <img
+                    src={previews[type]!}
+                    alt={`${type} Signature`}
+                    className="image-preview large-preview"
+                />
             </div>
-        )
-    );
+        );
 
     return (
         <div className="signature-comparison-container">
@@ -143,27 +222,35 @@ const SignatureUploader: React.FC = () => {
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={(e) => handleFileChange(e, 'original')}
+                    onChange={(e) => handleFileChange(e, "original")}
                     ref={originalInputRef}
                     style={{ display: "none" }}
                 />
-                <button className="file-upload-button" onClick={() => originalInputRef.current?.click()}>
+                <button
+                    className="file-upload-button"
+                    onClick={() => originalInputRef.current?.click()}
+                >
                     Загрузить оригинальные подписи
                 </button>
 
                 {signatures.original.length > 0 && (
                     <>
-                        <h4>Выберите оригинальную подпись:</h4>
+                        <h4>Оригинальные подписи:</h4>
                         <ul>
-                            {signatures.original.map(signature => (
+                            {signatures.original.map((signature) => (
                                 <li key={signature.id}>
                                     {signature.name}
-                                    <button className="delete-button" onClick={() => handleDeleteSignature(signature.id)}>Удалить</button>
+                                    <button
+                                        className="delete-button"
+                                        onClick={() => handleDeleteSignature(signature.id)}
+                                    >
+                                        Удалить
+                                    </button>
                                 </li>
                             ))}
                         </ul>
-                        {renderSignatureOptions('original')}
-                        {renderPreview('original')}
+                        {renderSignatureOptions("original")}
+                        {renderPreview("original")}
                     </>
                 )}
             </div>
@@ -174,19 +261,22 @@ const SignatureUploader: React.FC = () => {
                     type="file"
                     accept="image/*"
                     multiple
-                    onChange={(e) => handleFileChange(e, 'test')}
+                    onChange={(e) => handleFileChange(e, "test")}
                     ref={testInputRef}
                     style={{ display: "none" }}
                 />
-                <button className="file-upload-button" onClick={() => testInputRef.current?.click()}>
+                <button
+                    className="file-upload-button"
+                    onClick={() => testInputRef.current?.click()}
+                >
                     Загрузить проверяемые подписи
                 </button>
 
                 {signatures.test.length > 0 && (
                     <>
-                        <h4>Выберите проверяемую подпись:</h4>
-                        {renderSignatureOptions('test')}
-                        {renderPreview('test')}
+                        <h4>Проверяемые подписи:</h4>
+                        {renderSignatureOptions("test")}
+                        {renderPreview("test")}
                     </>
                 )}
             </div>

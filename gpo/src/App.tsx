@@ -1,11 +1,9 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
 import Header from './Header';
-import AdminPanel from './Authorization/AdminPanel';
-import UserPanel from './Authorization/UserPanel';
 import SignatureUploader from './components/SignatureUploader';
 import './App.css';
-import {Button} from "@mui/material";
+import { Button } from "@mui/material";
 import AuthPage from "./Authorization/AuthPage";
 import PrivateRoute from "./Authorization/PrivateRoute";
 
@@ -28,8 +26,6 @@ const App: React.FC = () => {
                         element={
                             <PrivateRoute>
                                 <div>
-                                    {userRole === 'admin' && <AdminPanel />}
-                                    {userRole === 'user' && <UserPanel />}
                                     {userRole && (
                                         <Button variant="contained" onClick={handleLogout}>
                                             Выйти

@@ -26,22 +26,254 @@ import { BASE_PATH, COLLECTION_FORMATS, BaseAPI, RequiredError, operationServerM
 /**
  * 
  * @export
- * @interface GetSignaturesInfoResponse
+ * @interface SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest
  */
-export interface GetSignaturesInfoResponse {
+export interface SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest {
+    /**
+     * 
+     * @type {string}
+     * @memberof SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest
+     */
+    'email'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest
+     */
+    'password'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse
+ */
+export interface SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse {
+    /**
+     * 
+     * @type {string}
+     * @memberof SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse
+     */
+    'refreshToken'?: string | null;
+    /**
+     * 
+     * @type {string}
+     * @memberof SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse
+     */
+    'accessToken'?: string | null;
+}
+/**
+ * 
+ * @export
+ * @interface SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse
+ */
+export interface SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse {
     /**
      * 
      * @type {number}
-     * @memberof GetSignaturesInfoResponse
+     * @memberof SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse
      */
     'id'?: number;
     /**
      * 
      * @type {string}
-     * @memberof GetSignaturesInfoResponse
+     * @memberof SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse
      */
     'name'?: string | null;
 }
+
+/**
+ * AuthenticationApi - axios parameter creator
+ * @export
+ */
+export const AuthenticationApiAxiosParamCreator = function (configuration?: Configuration) {
+    return {
+        /**
+         * 
+         * @summary Войти.
+         * @param {SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest} [signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest] Данные для входа.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationLoginPost: async (signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest?: SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/Authentication/Login`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+
+    
+            localVarHeaderParameter['Content-Type'] = 'application/json';
+
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+            localVarRequestOptions.data = serializeDataIfNeeded(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, localVarRequestOptions, configuration)
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Регистрация.
+         * @param {string} [userName] Имя пользователя
+         * @param {string} [email] Почта.
+         * @param {string} [password] Пароль.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationRegisterPost: async (userName?: string, email?: string, password?: string, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/Authentication/Register`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            if (userName !== undefined) {
+                localVarQueryParameter['userName'] = userName;
+            }
+
+            if (email !== undefined) {
+                localVarQueryParameter['email'] = email;
+            }
+
+            if (password !== undefined) {
+                localVarQueryParameter['password'] = password;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+    }
+};
+
+/**
+ * AuthenticationApi - functional programming interface
+ * @export
+ */
+export const AuthenticationApiFp = function(configuration?: Configuration) {
+    const localVarAxiosParamCreator = AuthenticationApiAxiosParamCreator(configuration)
+    return {
+        /**
+         * 
+         * @summary Войти.
+         * @param {SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest} [signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest] Данные для входа.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest?: SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthenticationApi.authenticationLoginPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Регистрация.
+         * @param {string} [userName] Имя пользователя
+         * @param {string} [email] Почта.
+         * @param {string} [password] Пароль.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async authenticationRegisterPost(userName?: string, email?: string, password?: string, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.authenticationRegisterPost(userName, email, password, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['AuthenticationApi.authenticationRegisterPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+    }
+};
+
+/**
+ * AuthenticationApi - factory interface
+ * @export
+ */
+export const AuthenticationApiFactory = function (configuration?: Configuration, basePath?: string, axios?: AxiosInstance) {
+    const localVarFp = AuthenticationApiFp(configuration)
+    return {
+        /**
+         * 
+         * @summary Войти.
+         * @param {SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest} [signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest] Данные для входа.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest?: SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options?: RawAxiosRequestConfig): AxiosPromise<SignatureRecognitionWebApiControllersAuthenticationResponsesLoginResponse> {
+            return localVarFp.authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Регистрация.
+         * @param {string} [userName] Имя пользователя
+         * @param {string} [email] Почта.
+         * @param {string} [password] Пароль.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        authenticationRegisterPost(userName?: string, email?: string, password?: string, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.authenticationRegisterPost(userName, email, password, options).then((request) => request(axios, basePath));
+        },
+    };
+};
+
+/**
+ * AuthenticationApi - object-oriented interface
+ * @export
+ * @class AuthenticationApi
+ * @extends {BaseAPI}
+ */
+export class AuthenticationApi extends BaseAPI {
+    /**
+     * 
+     * @summary Войти.
+     * @param {SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest} [signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest] Данные для входа.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApi
+     */
+    public authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest?: SignatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options?: RawAxiosRequestConfig) {
+        return AuthenticationApiFp(this.configuration).authenticationLoginPost(signatureRecognitionWebApiControllersAuthenticationRequestsLoginRequest, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Регистрация.
+     * @param {string} [userName] Имя пользователя
+     * @param {string} [email] Почта.
+     * @param {string} [password] Пароль.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof AuthenticationApi
+     */
+    public authenticationRegisterPost(userName?: string, email?: string, password?: string, options?: RawAxiosRequestConfig) {
+        return AuthenticationApiFp(this.configuration).authenticationRegisterPost(userName, email, password, options).then((request) => request(this.axios, this.basePath));
+    }
+}
+
+
 
 /**
  * SignaturesApi - axios parameter creator
@@ -51,12 +283,12 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
     return {
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить несколько подписей.
          * @param {Array<File>} [files] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAddPost: async (userId?: number, files?: Array<File>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSignaturesAddPost: async (files?: Array<File>, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Signatures/Add`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -70,9 +302,8 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            if (userId !== undefined) {
-                localVarQueryParameter['userId'] = userId;
-            }
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
             if (files) {
                 files.forEach((element) => {
@@ -96,12 +327,12 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить подпись.
          * @param {File} [file] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAddSignaturePost: async (userId?: number, file?: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSignaturesAddSignaturePost: async (file?: File, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Signatures/AddSignature`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -115,13 +346,12 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarQueryParameter = {} as any;
             const localVarFormParams = new ((configuration && configuration.formDataCtor) || FormData)();
 
-            if (userId !== undefined) {
-                localVarQueryParameter['UserId'] = userId;
-            }
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
             if (file !== undefined) { 
-                localVarFormParams.append('File', file as any);
+                localVarFormParams.append('file', file as any);
             }
     
     
@@ -139,11 +369,11 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Удалить все подписи пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAllDeleteDelete: async (userId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSignaturesAllDeleteDelete: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Signatures/All/Delete`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -156,9 +386,8 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (userId !== undefined) {
-                localVarQueryParameter['userId'] = userId;
-            }
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
     
@@ -173,7 +402,8 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Удалить подпись.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -190,6 +420,9 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
             if (fileId !== undefined) {
                 localVarQueryParameter['fileId'] = fileId;
             }
@@ -207,7 +440,46 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Находит подписи на изображении.
+         * @param {number} [fileId] Id изображения на котором надо найти подписи.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiSignaturesFileDetectSignaturesPost: async (fileId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+            const localVarPath = `/api/Signatures/File/DetectSignatures`;
+            // use dummy base URL string because the URL constructor only accepts absolute URLs.
+            const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
+            let baseOptions;
+            if (configuration) {
+                baseOptions = configuration.baseOptions;
+            }
+
+            const localVarRequestOptions = { method: 'POST', ...baseOptions, ...options};
+            const localVarHeaderParameter = {} as any;
+            const localVarQueryParameter = {} as any;
+
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
+            if (fileId !== undefined) {
+                localVarQueryParameter['fileId'] = fileId;
+            }
+
+
+    
+            setSearchParams(localVarUrlObj, localVarQueryParameter);
+            let headersFromBaseOptions = baseOptions && baseOptions.headers ? baseOptions.headers : {};
+            localVarRequestOptions.headers = {...localVarHeaderParameter, ...headersFromBaseOptions, ...options.headers};
+
+            return {
+                url: toPathString(localVarUrlObj),
+                options: localVarRequestOptions,
+            };
+        },
+        /**
+         * 
+         * @summary Получить изображение подписи.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -224,6 +496,9 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
+
             if (fileId !== undefined) {
                 localVarQueryParameter['fileId'] = fileId;
             }
@@ -241,11 +516,11 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Получить информацию о подписях пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesInformationGetGet: async (userId?: number, options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
+        apiSignaturesInformationGetGet: async (options: RawAxiosRequestConfig = {}): Promise<RequestArgs> => {
             const localVarPath = `/api/Signatures/Information/Get`;
             // use dummy base URL string because the URL constructor only accepts absolute URLs.
             const localVarUrlObj = new URL(localVarPath, DUMMY_BASE_URL);
@@ -258,9 +533,8 @@ export const SignaturesApiAxiosParamCreator = function (configuration?: Configur
             const localVarHeaderParameter = {} as any;
             const localVarQueryParameter = {} as any;
 
-            if (userId !== undefined) {
-                localVarQueryParameter['userId'] = userId;
-            }
+            // authentication oauth2 required
+            await setApiKeyToObject(localVarHeaderParameter, "Authorization", configuration)
 
 
     
@@ -285,45 +559,46 @@ export const SignaturesApiFp = function(configuration?: Configuration) {
     return {
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить несколько подписей.
          * @param {Array<File>} [files] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSignaturesAddPost(userId?: number, files?: Array<File>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAddPost(userId, files, options);
+        async apiSignaturesAddPost(files?: Array<File>, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAddPost(files, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SignaturesApi.apiSignaturesAddPost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить подпись.
          * @param {File} [file] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSignaturesAddSignaturePost(userId?: number, file?: File, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAddSignaturePost(userId, file, options);
+        async apiSignaturesAddSignaturePost(file?: File, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAddSignaturePost(file, options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SignaturesApi.apiSignaturesAddSignaturePost']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Удалить все подписи пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSignaturesAllDeleteDelete(userId?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAllDeleteDelete(userId, options);
+        async apiSignaturesAllDeleteDelete(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesAllDeleteDelete(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SignaturesApi.apiSignaturesAllDeleteDelete']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Удалить подпись.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -335,7 +610,21 @@ export const SignaturesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Находит подписи на изображении.
+         * @param {number} [fileId] Id изображения на котором надо найти подписи.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        async apiSignaturesFileDetectSignaturesPost(fileId?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<void>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesFileDetectSignaturesPost(fileId, options);
+            const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
+            const localVarOperationServerBasePath = operationServerMap['SignaturesApi.apiSignaturesFileDetectSignaturesPost']?.[localVarOperationServerIndex]?.url;
+            return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
+        },
+        /**
+         * 
+         * @summary Получить изображение подписи.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -347,12 +636,12 @@ export const SignaturesApiFp = function(configuration?: Configuration) {
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Получить информацию о подписях пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        async apiSignaturesInformationGetGet(userId?: number, options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<GetSignaturesInfoResponse>>> {
-            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesInformationGetGet(userId, options);
+        async apiSignaturesInformationGetGet(options?: RawAxiosRequestConfig): Promise<(axios?: AxiosInstance, basePath?: string) => AxiosPromise<Array<SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse>>> {
+            const localVarAxiosArgs = await localVarAxiosParamCreator.apiSignaturesInformationGetGet(options);
             const localVarOperationServerIndex = configuration?.serverIndex ?? 0;
             const localVarOperationServerBasePath = operationServerMap['SignaturesApi.apiSignaturesInformationGetGet']?.[localVarOperationServerIndex]?.url;
             return (axios, basePath) => createRequestFunction(localVarAxiosArgs, globalAxios, BASE_PATH, configuration)(axios, localVarOperationServerBasePath || basePath);
@@ -369,36 +658,37 @@ export const SignaturesApiFactory = function (configuration?: Configuration, bas
     return {
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить несколько подписей.
          * @param {Array<File>} [files] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAddPost(userId?: number, files?: Array<File>, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiSignaturesAddPost(userId, files, options).then((request) => request(axios, basePath));
+        apiSignaturesAddPost(files?: Array<File>, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiSignaturesAddPost(files, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Добавить подпись.
          * @param {File} [file] 
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAddSignaturePost(userId?: number, file?: File, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiSignaturesAddSignaturePost(userId, file, options).then((request) => request(axios, basePath));
+        apiSignaturesAddSignaturePost(file?: File, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiSignaturesAddSignaturePost(file, options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Удалить все подписи пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesAllDeleteDelete(userId?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
-            return localVarFp.apiSignaturesAllDeleteDelete(userId, options).then((request) => request(axios, basePath));
+        apiSignaturesAllDeleteDelete(options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiSignaturesAllDeleteDelete(options).then((request) => request(axios, basePath));
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Удалить подпись.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -407,7 +697,18 @@ export const SignaturesApiFactory = function (configuration?: Configuration, bas
         },
         /**
          * 
-         * @param {number} [fileId] 
+         * @summary Находит подписи на изображении.
+         * @param {number} [fileId] Id изображения на котором надо найти подписи.
+         * @param {*} [options] Override http request option.
+         * @throws {RequiredError}
+         */
+        apiSignaturesFileDetectSignaturesPost(fileId?: number, options?: RawAxiosRequestConfig): AxiosPromise<void> {
+            return localVarFp.apiSignaturesFileDetectSignaturesPost(fileId, options).then((request) => request(axios, basePath));
+        },
+        /**
+         * 
+         * @summary Получить изображение подписи.
+         * @param {number} [fileId] Идентификатор файла подписи.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
@@ -416,12 +717,12 @@ export const SignaturesApiFactory = function (configuration?: Configuration, bas
         },
         /**
          * 
-         * @param {number} [userId] 
+         * @summary Получить информацию о подписях пользователя.
          * @param {*} [options] Override http request option.
          * @throws {RequiredError}
          */
-        apiSignaturesInformationGetGet(userId?: number, options?: RawAxiosRequestConfig): AxiosPromise<Array<GetSignaturesInfoResponse>> {
-            return localVarFp.apiSignaturesInformationGetGet(userId, options).then((request) => request(axios, basePath));
+        apiSignaturesInformationGetGet(options?: RawAxiosRequestConfig): AxiosPromise<Array<SignatureRecognitionWebApiControllersSignaturesResponsesGetSignaturesInfoResponse>> {
+            return localVarFp.apiSignaturesInformationGetGet(options).then((request) => request(axios, basePath));
         },
     };
 };
@@ -435,42 +736,43 @@ export const SignaturesApiFactory = function (configuration?: Configuration, bas
 export class SignaturesApi extends BaseAPI {
     /**
      * 
-     * @param {number} [userId] 
+     * @summary Добавить несколько подписей.
      * @param {Array<File>} [files] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
      */
-    public apiSignaturesAddPost(userId?: number, files?: Array<File>, options?: RawAxiosRequestConfig) {
-        return SignaturesApiFp(this.configuration).apiSignaturesAddPost(userId, files, options).then((request) => request(this.axios, this.basePath));
+    public apiSignaturesAddPost(files?: Array<File>, options?: RawAxiosRequestConfig) {
+        return SignaturesApiFp(this.configuration).apiSignaturesAddPost(files, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {number} [userId] 
+     * @summary Добавить подпись.
      * @param {File} [file] 
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
      */
-    public apiSignaturesAddSignaturePost(userId?: number, file?: File, options?: RawAxiosRequestConfig) {
-        return SignaturesApiFp(this.configuration).apiSignaturesAddSignaturePost(userId, file, options).then((request) => request(this.axios, this.basePath));
+    public apiSignaturesAddSignaturePost(file?: File, options?: RawAxiosRequestConfig) {
+        return SignaturesApiFp(this.configuration).apiSignaturesAddSignaturePost(file, options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {number} [userId] 
+     * @summary Удалить все подписи пользователя.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
      */
-    public apiSignaturesAllDeleteDelete(userId?: number, options?: RawAxiosRequestConfig) {
-        return SignaturesApiFp(this.configuration).apiSignaturesAllDeleteDelete(userId, options).then((request) => request(this.axios, this.basePath));
+    public apiSignaturesAllDeleteDelete(options?: RawAxiosRequestConfig) {
+        return SignaturesApiFp(this.configuration).apiSignaturesAllDeleteDelete(options).then((request) => request(this.axios, this.basePath));
     }
 
     /**
      * 
-     * @param {number} [fileId] 
+     * @summary Удалить подпись.
+     * @param {number} [fileId] Идентификатор файла подписи.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
@@ -481,7 +783,20 @@ export class SignaturesApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} [fileId] 
+     * @summary Находит подписи на изображении.
+     * @param {number} [fileId] Id изображения на котором надо найти подписи.
+     * @param {*} [options] Override http request option.
+     * @throws {RequiredError}
+     * @memberof SignaturesApi
+     */
+    public apiSignaturesFileDetectSignaturesPost(fileId?: number, options?: RawAxiosRequestConfig) {
+        return SignaturesApiFp(this.configuration).apiSignaturesFileDetectSignaturesPost(fileId, options).then((request) => request(this.axios, this.basePath));
+    }
+
+    /**
+     * 
+     * @summary Получить изображение подписи.
+     * @param {number} [fileId] Идентификатор файла подписи.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
@@ -492,13 +807,13 @@ export class SignaturesApi extends BaseAPI {
 
     /**
      * 
-     * @param {number} [userId] 
+     * @summary Получить информацию о подписях пользователя.
      * @param {*} [options] Override http request option.
      * @throws {RequiredError}
      * @memberof SignaturesApi
      */
-    public apiSignaturesInformationGetGet(userId?: number, options?: RawAxiosRequestConfig) {
-        return SignaturesApiFp(this.configuration).apiSignaturesInformationGetGet(userId, options).then((request) => request(this.axios, this.basePath));
+    public apiSignaturesInformationGetGet(options?: RawAxiosRequestConfig) {
+        return SignaturesApiFp(this.configuration).apiSignaturesInformationGetGet(options).then((request) => request(this.axios, this.basePath));
     }
 }
 

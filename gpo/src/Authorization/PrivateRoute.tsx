@@ -7,7 +7,11 @@ interface PrivateRouteProps {
 
 const PrivateRoute: React.FC<PrivateRouteProps> = ({ children }) => {
     const token = localStorage.getItem('token');
-    return token ? <>{children}</> : <Navigate to="/auth" />;
+    if (!token) {
+        console.error("Пользователь не авторизован");
+        return <Navigate to="/auth" />;
+    }
+    return <>{children}</>;
 };
 
 export default PrivateRoute;

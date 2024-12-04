@@ -1,0 +1,423 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "DefaultApiTemplate",
+    "version": "v1"
+  },
+  "paths": {
+    "/Authentication/Login": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Войти.",
+        "requestBody": {
+          "description": "Данные для входа.",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Requests.LoginRequest"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Requests.LoginRequest"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Requests.LoginRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Responses.LoginResponse"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Responses.LoginResponse"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Authentication.Responses.LoginResponse"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/Authentication/Register": {
+      "post": {
+        "tags": [
+          "Authentication"
+        ],
+        "summary": "Регистрация.",
+        "parameters": [
+          {
+            "name": "userName",
+            "in": "query",
+            "description": "Имя пользователя",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "email",
+            "in": "query",
+            "description": "Почта.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "password",
+            "in": "query",
+            "description": "Пароль.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/api/Signatures/AddSignature": {
+      "post": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Добавить подпись.",
+        "requestBody": {
+          "description": "файл подписи.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "file": {
+                    "type": "string",
+                    "format": "binary"
+                  }
+                }
+              },
+              "encoding": {
+                "file": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/Add": {
+      "post": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Добавить несколько подписей.",
+        "requestBody": {
+          "description": "Файлы подписей.",
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "files": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "format": "binary"
+                    }
+                  }
+                }
+              },
+              "encoding": {
+                "files": {
+                  "style": "form"
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/Information/Get": {
+      "get": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Получить информацию о подписях пользователя.",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Signatures.Responses.GetSignaturesInfoResponse"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Signatures.Responses.GetSignaturesInfoResponse"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/SignatureRecognition.WebApi.Controllers.Signatures.Responses.GetSignaturesInfoResponse"
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/GetSignature": {
+      "get": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Получить изображение подписи.",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "query",
+            "description": "Идентификатор файла подписи.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/DeleteSignature": {
+      "delete": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Удалить подпись.",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "query",
+            "description": "Идентификатор файла подписи.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/All/Delete": {
+      "delete": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Удалить все подписи пользователя.",
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    },
+    "/api/Signatures/File/DetectSignatures": {
+      "post": {
+        "tags": [
+          "Signatures"
+        ],
+        "summary": "Находит подписи на изображении.",
+        "parameters": [
+          {
+            "name": "fileId",
+            "in": "query",
+            "description": "Id изображения на котором надо найти подписи.",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          }
+        },
+        "security": [
+          {
+            "oauth2": [ ]
+          }
+        ]
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "SignatureRecognition.WebApi.Controllers.Authentication.Requests.LoginRequest": {
+        "type": "object",
+        "properties": {
+          "email": {
+            "type": "string",
+            "nullable": true
+          },
+          "password": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignatureRecognition.WebApi.Controllers.Authentication.Responses.LoginResponse": {
+        "type": "object",
+        "properties": {
+          "refreshToken": {
+            "type": "string",
+            "nullable": true
+          },
+          "accessToken": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "SignatureRecognition.WebApi.Controllers.Signatures.Responses.GetSignaturesInfoResponse": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "format": "int64"
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "securitySchemes": {
+      "oauth2": {
+        "type": "apiKey",
+        "name": "Authorization",
+        "in": "header"
+      }
+    }
+  }
+}
