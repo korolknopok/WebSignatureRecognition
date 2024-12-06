@@ -16,9 +16,7 @@ interface GetSignaturesInfoResponse {
 
 const SignatureUploader: React.FC = () => {
 
-    const DETECT_PATH = "http://localhost:5000";
-
-    const API_PATH = "http://localhost:7015";
+    const API_PATH = "http://localhost:5089";
 
     const [signatures, setSignatures] = useState<{ original: Signature[], test: Signature[] }>({
         original: [],
@@ -74,7 +72,7 @@ const SignatureUploader: React.FC = () => {
         console.log("Заголовки запроса:", headers);
 
         try {
-            const response = await axios.get<GetSignaturesInfoResponse[]>(`${API_PATH}/api/Signatures/Information/Get`, {
+            const response = await axios.get<GetSignaturesInfoResponse[]>("http://localhost:5098/api/Signatures/Information/Get", {
                 headers,
             });
 
@@ -84,7 +82,7 @@ const SignatureUploader: React.FC = () => {
                 const fetchedSignatures: Signature[] = response.data.map((sig: GetSignaturesInfoResponse) => ({
                     id: sig.id,
                     name: sig.name,
-                    url: `${API_PATH}/api/Signatures/GetSignature?fileId=${sig.id}`,
+                    url: `http://localhost:5098/api/Signatures/GetSignature?fileId=${sig.id}`,
                 }));
 
                 for (const sig of fetchedSignatures) {
@@ -127,7 +125,7 @@ const SignatureUploader: React.FC = () => {
     ) => {
         const files = event.target.files;
         if (files) {
-            const newSignatures: Signature[] = Array.from(files).map((file, index) => ({
+            const newSignatures: any = Array.from(files).map((file, index) => ({
                 id: signatures[type].length + index + 1,
                 name: file.name,
                 blobUrl: URL.createObjectURL(file),

@@ -6,7 +6,7 @@ import axios from 'axios';
 
 const AuthPage: React.FC = () => {
 
-    const API_PATH = "http://localhost:7015";
+    const API_PATH = "http://localhost:5098";
 
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
