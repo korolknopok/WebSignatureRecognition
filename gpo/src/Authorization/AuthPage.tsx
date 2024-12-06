@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button, TextField, Tabs, Tab } from '@mui/material';
+import { Box, Button, TextField, Tabs, Tab } from '@mui/material';
+import Typography from '@mui/material/Typography';
 import axios from 'axios';
 
 const AuthPage: React.FC = () => {
+
+    const API_PATH = "http://localhost:7015";
+
     const [username, setUsername] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -17,7 +21,7 @@ const AuthPage: React.FC = () => {
 
     const handleRegister = async () => {
         try {
-            const response = await axios.post('http://localhost:5098/Authentication/Register', null, {
+            const response = await axios.post(`${API_PATH}/Authentication/Register`, null, {
                 params: { username, email, password }
             });
             if (response.status === 200) {
@@ -32,7 +36,7 @@ const AuthPage: React.FC = () => {
 
     const handleLogin = async () => {
         try {
-            const response = await axios.post('http://localhost:5098/Authentication/Login', {
+            const response = await axios.post(`${API_PATH}/Authentication/Login`, {
                 email,
                 password
             }, {

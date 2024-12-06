@@ -5,16 +5,22 @@ FROM node:18-alpine
 WORKDIR /app
 
 # Копируем package.json и package-lock.json для установки зависимостей
-COPY package.json package-lock.json ./
+COPY package.json yarn.lock ./
+
+# RUN npm install react-scripts@latest
+
+RUN yarn upgrade react-scripts
 
 # Устанавливаем зависимости (кэшируется, если файлы не изменены)
-RUN npm install --silent
+# RUN npm install --force
 
 # Копируем весь проект в контейнер
 COPY . .
 
 # Сборка приложения
-RUN npm run build
+# RUN NODE_OPTIONS=--openssl-legacy-provider npm run build
+
+RUN NODE_OPTIONS=--openssl-legacy-provider yarn build
 
 # Указываем порт
 EXPOSE 3000
