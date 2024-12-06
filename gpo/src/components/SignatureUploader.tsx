@@ -6,6 +6,7 @@ interface Signature {
     id: number;
     name: string;
     url: string;
+    blobUrl?: string;
 }
 
 interface GetSignaturesInfoResponse {
@@ -14,6 +15,11 @@ interface GetSignaturesInfoResponse {
 }
 
 const SignatureUploader: React.FC = () => {
+
+    const DETECT_PATH = "http://localhost:5000";
+
+    const API_PATH = "http://localhost:7015";
+
     const [signatures, setSignatures] = useState<{ original: Signature[], test: Signature[] }>({
         original: [],
         test: [],
@@ -68,7 +74,7 @@ const SignatureUploader: React.FC = () => {
         console.log("Заголовки запроса:", headers);
 
         try {
-            const response = await axios.get("http://localhost:5098/api/Signatures/Information/Get", {
+            const response = await axios.get<GetSignaturesInfoResponse[]>(`${API_PATH}/api/Signatures/Information/Get`, {
                 headers,
             });
 
@@ -78,8 +84,16 @@ const SignatureUploader: React.FC = () => {
                 const fetchedSignatures: Signature[] = response.data.map((sig: GetSignaturesInfoResponse) => ({
                     id: sig.id,
                     name: sig.name,
-                    url: `http://localhost:5098/api/Signatures/GetSignature?fileId=${sig.id}`,
+                    url: `${API_PATH}/api/Signatures/GetSignature?fileId=${sig.id}`,
                 }));
+
+                for (const sig of fetchedSignatures) {
+                    const imageResponse = await axios.get(sig.url, {
+                        responseType: 'blob',
+                        headers: headers,
+                    });
+                    sig.blobUrl = URL.createObjectURL(imageResponse.data); // Создаём Blob-URL
+                }
 
                 setSignatures((prev) => ({
                     ...prev,
@@ -116,7 +130,7 @@ const SignatureUploader: React.FC = () => {
             const newSignatures: Signature[] = Array.from(files).map((file, index) => ({
                 id: signatures[type].length + index + 1,
                 name: file.name,
-                url: URL.createObjectURL(file),
+                blobUrl: URL.createObjectURL(file),
             }));
 
             if (type === "original") {
@@ -127,7 +141,7 @@ const SignatureUploader: React.FC = () => {
                     const formData = new FormData();
                     Array.from(files).forEach((file) => formData.append("file", file));
 
-                    await axios.post("http://localhost:5098/api/Signatures/AddSignature", formData, {
+                    await axios.post(`${API_PATH}/api/Signatures/AddSignature`, formData, {
                         headers: {
                             "Content-Type": "multipart/form-data",
                             Authorization: `Bearer ${token}`,
@@ -155,7 +169,7 @@ const SignatureUploader: React.FC = () => {
                 throw new Error("Токена нет");
             }
 
-            await axios.delete(`http://localhost:5098/api/Signatures/DeleteSignature`, {
+            await axios.delete(`${API_PATH}/api/Signatures/DeleteSignature`, {
                 headers: {
                     Authorization: `Bearer ${token}`,
                     Accept: '*/*',
@@ -192,7 +206,7 @@ const SignatureUploader: React.FC = () => {
         <select onChange={(e) => handleSelectSignature(type, e.target.value)}>
             <option value="">-- Выберите подпись --</option>
             {signatures[type].map((signature) => (
-                <option key={signature.id} value={signature.url}>
+                <option key={signature.id} value={signature.blobUrl}>
                     {signature.name}
                 </option>
             ))}
